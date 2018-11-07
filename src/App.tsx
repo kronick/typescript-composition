@@ -27,14 +27,35 @@ class App extends Component<{}, {}> {
           )}
         </Toggle>
 
+        {/* This only works because `Indicator` is a functional component.
+            If it were a class component, we couldn't do this. */}
         <Toggle>{Indicator}</Toggle>
 
+        {/* "Classic" render props pattern. This works whether `Indicator`
+            is a function or a class component. Downside is that in the
+            case where it's a class component with an interface that conforms
+            to the injected props exactly, it's really verbose.
+            
+            With many render prop parameters of the same type (strings, for
+            example), there's also the risk that we "wire up" the interior
+            component incorrectly. */}
         <Toggle>
           {({ on, onClick }) => <Indicator onClick={onClick} on={on} />}
         </Toggle>
 
+        {/* A much more concise syntax using the "component injection" pattern.
+            The props that `Indicator` takes in must match the interface
+            specified in the definition of `ToggleInjector` exactly. This
+            simplifies things and minimizes the chance of introducing a
+            bug by incorrectly wiring things up. */}
         <ToggleInjector component={Indicator} />
 
+        {/* `ToggleInjector` can also infer additional props that it should
+             accept based on the component it's wrapping. In this case,
+             `IndicatorWithOptions` accepts two extra props that are set
+             on `ToggleInjector` directly. This can be pretty useful and
+             allows `ToggleInjector` to "masquerade" as an extended
+             version of its wrapped component.*/}
         <ToggleInjector
           component={IndicatorWithOptions}
           valueOn={"👍"}
@@ -65,9 +86,9 @@ class App extends Component<{}, {}> {
           )}
         />
 
-        {/* We need to use the anonymous component pattern if we want to
-             compose multiple component injectors. Not ideal because the inner
-             component will re-mount on every re-render. */}
+        {/* We need to use the anonymous functiona component pattern if we want
+             to compose multiple component injectors. Not ideal because the
+             inner component will re-mount on every re-render. */}
         <ToggleInjector
           component={({ on, onClick }) => (
             <TimeInjector
@@ -107,7 +128,7 @@ class App extends Component<{}, {}> {
         {/* We can create a Composer function that will do the nested anonymous
             functional component thing recursively for us.
             
-            Types are not really repsected, however. */}
+            Types are not really respected, however. */}
         <Composer<TimeInjectorProps & ToggleProps & ClockProps>
           millis={true}
           showText={true}
@@ -118,6 +139,8 @@ class App extends Component<{}, {}> {
           showText={true}
           components={[TimeInjector, ToggleInjector, Clock]}
         />
+
+        {/* TODO: Higher Order Components (HOCs) */}
       </div>
     );
   }
