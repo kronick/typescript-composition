@@ -25,6 +25,8 @@ interface ToggleState {
 
 /** State wrapper that provides a boolean `on` prop to the wrapped component
  *  and an `onClick` callback prop to change state.
+ *
+ *  Uses the component injection pattern with a named component slot.
  */
 export default class Toggle<
   TPassthroughProps extends ToggleChildProps

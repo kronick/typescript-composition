@@ -13,13 +13,14 @@ interface ToggleProps {
   /** Children must be either a React class component or function component
    *  that accepts the ToggleChildProps
    */
-  children: React.ComponentType<ToggleChildProps>;
+  children: React.SFC<ToggleChildProps>;
 }
 
 interface ToggleState {
   on: boolean;
 }
 
+/** Example of a state container component that uses render props */
 export default class Toggle extends React.Component<ToggleProps, ToggleState> {
   public constructor(props: ToggleProps) {
     super(props);
@@ -31,6 +32,6 @@ export default class Toggle extends React.Component<ToggleProps, ToggleState> {
   };
 
   public render() {
-    return <this.props.children onClick={this.onToggle} on={this.state.on} />;
+    return this.props.children({ onClick: this.onToggle, on: this.state.on });
   }
 }

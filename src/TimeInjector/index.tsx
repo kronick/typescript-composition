@@ -2,39 +2,39 @@ import React from "react";
 import omit from "lodash/omit";
 
 /** Props that the child of this component must accept */
-export interface WithTimeInjectedProps {
+export interface TimeInjectorInjectedProps {
   time: string;
 }
 
-export interface WithTimeProps<TPassthroughProps = {}> {
+export interface TimeInjectorProps<TPassthroughProps = {}> {
   /** Component to wrap
    *
    *  Accepts any valid React component type (function or class component) that
-   *  accepts the WithTimeChildProps (`onClick` and `on`)
+   *  accepts the TimeInjectorChildProps (`onClick` and `on`)
    */
   component: React.ComponentType<TPassthroughProps>;
 
   millis: boolean;
 }
 
-interface WithTimeState {
+interface TimeInjectorState {
   time: string;
 }
 
 /** State wrapper that injects an updated datetime string every 1000ms into
  *  the wrapped component's `date` prop.
  */
-export default class WithTime<
-  TPassthroughProps extends WithTimeInjectedProps
+export default class TimeInjector<
+  TPassthroughProps extends TimeInjectorInjectedProps
 > extends React.Component<
-  WithTimeProps<TPassthroughProps> &
-    Omit<TPassthroughProps, keyof WithTimeInjectedProps>,
-  WithTimeState
+  TimeInjectorProps<TPassthroughProps> &
+    Omit<TPassthroughProps, keyof TimeInjectorInjectedProps>,
+  TimeInjectorState
 > {
   private interval?: number;
 
   public constructor(
-    props: WithTimeProps<TPassthroughProps> & TPassthroughProps
+    props: TimeInjectorProps<TPassthroughProps> & TPassthroughProps
   ) {
     super(props);
     this.state = { time: this.getDate() };
@@ -49,7 +49,7 @@ export default class WithTime<
   }
 
   private getDate() {
-    const props = this.props as WithTimeProps<TPassthroughProps>;
+    const props = this.props as TimeInjectorProps<TPassthroughProps>;
     return props.millis
       ? `${new Date().toLocaleTimeString()} (${new Date()
           .getTime()
@@ -62,7 +62,7 @@ export default class WithTime<
   };
 
   public render() {
-    const Component = (this.props as WithTimeProps<TPassthroughProps>)
+    const Component = (this.props as TimeInjectorProps<TPassthroughProps>)
       .component;
     const passthroughProps = omit(this.props, "component");
     return <Component time={this.state.time} {...passthroughProps} />;
